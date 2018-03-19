@@ -19,9 +19,6 @@ app.use(require('./middlewares/flash'));
 
 
 app.get('/', function(req, res){
-	console.log("here2");
-	if(req.session)
-		console.log(req.session);
 	// console.log(req.session.error);
 	// if (req.session.error){
 	// 	res.locals.error = req.session.error;

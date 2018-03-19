@@ -1,7 +1,7 @@
 let express = require("express");
 let bodyParser = require("body-parser")
 let app = express();
-let session = session = require('express-session');
+let session = require('express-session');
 
 app.set('view engine', 'ejs');
 
@@ -9,17 +9,24 @@ app.use('/assets', express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false}));
 app.use(bodyParser.json());
 app.use(session({
-	secret: 'keyboard cat',
+	secret: 'jweganoisenfgosdn',
 	resave: false,
-	saveUninitialize: true,
+	saveUninitialized: true,
 	cookie: { secure: false}
 }));
 
+app.use(require('./middlewares/flash'));
+
+
 app.get('/', function(req, res){
-	if (req.session.error){
-		// response.locals.error = request.session.error;
-		// req.session.error = undefined;
-	}
+	console.log("here2");
+	if(req.session)
+		console.log(req.session);
+	// console.log(req.session.error);
+	// if (req.session.error){
+	// 	res.locals.error = req.session.error;
+	// 	req.session.error = undefined;
+	// }
 	res.render('index');
 });
 
@@ -32,10 +39,16 @@ app.get('/', function(req, res){
 app.post('/', function(req, res){
 
 	if (req.body.message === undefined || req.body.message === ''){
-		req.session.error = "il y a une erreur";
-		res.redirect('/');
+		// req.session.error = "il y a une erreur";
+		req.flash('error', "Vous n'avez pas posté de message");
 		// res.render('index', {error: "Vous n'avez pas entré de message :("});
+	}else{
+		let Message = require('./models/message');
+		Message.create(req.body.message, function(){
+			req.flash('sucess', "Merci !");
+		});
 	}
+	res.redirect('/');
 });
 
 

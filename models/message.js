@@ -2,17 +2,19 @@ let connection = require('../config/db');
 
 class Message {
 
-	static create(content, cb){
-		if(connection.state === 'disconnected'){
-			console.log("connection bad");
-  		}
+	static create (content, cb){
 		connection.query('INSERT INTO messages SET content = ?, created_at = ?', [content, new Date()], function (err, result){
 			if (err)
-			{
-				console.log("error sql")
-				// throw err;
-			}
+				throw err;
 			cb(result);
+		});
+	}
+
+	static all (cb){
+		connection.query('SELECT * FROM messages', function(err, rows){
+			if (err)
+				throw err;
+			cb(rows);
 		});
 	}
 

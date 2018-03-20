@@ -19,14 +19,11 @@ app.use(require('./middlewares/flash'));
 
 
 app.get('/', function(req, res){
-	// console.log(req.session.error);
-	// if (req.session.error){
-	// 	res.locals.error = req.session.error;
-	// 	req.session.error = undefined;
-	// }
-	res.render('index');
+	let Message = require('./models/message');
+	Message.all(function(messages){
+		res.render('index', {messages: messages});
+	})
 });
-
 
 // app.post('/', function(req, res){
 // 	console.log(req.body);
@@ -34,18 +31,15 @@ app.get('/', function(req, res){
 // });
 
 app.post('/', function(req, res){
-
 	if (req.body.message === undefined || req.body.message === ''){
-		// req.session.error = "il y a une erreur";
 		req.flash('error', "Vous n'avez pas posté de message");
-		// res.render('index', {error: "Vous n'avez pas entré de message :("});
-	}else{
+	} else {
 		let Message = require('./models/message');
 		Message.create(req.body.message, function(){
-			req.flash('sucess', "Merci !");
+			req.flash('success', "Merci !");
+			res.redirect('/');
 		});
 	}
-	res.redirect('/');
 });
 
 
